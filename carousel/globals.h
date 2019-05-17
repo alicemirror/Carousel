@@ -24,6 +24,7 @@
 #define MP3_TX_PIN 14   //! Serial connection to the mp3 player
 #define MP3_RX_PIN 13   //! Serial connection to the mp3 player
 
+#define MUSIC_TRIGGER_PIN 7   ///< Start the music until the signal is low
 #define PIR_PIN 9       //! PIR sensor input
 
 // ========================================== Default values

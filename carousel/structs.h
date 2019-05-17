@@ -8,6 +8,7 @@
  * 
  */
 
+#include "Arduino.h"
 
 #ifndef _SRUCTS
 #define _STRUCTS

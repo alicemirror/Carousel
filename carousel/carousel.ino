@@ -14,10 +14,25 @@
  */
 #include "statemachine.h"
 
+//! Setup and initialization
 void setup() {
-  
+  pinMode(MUSIC_TRIGGER_PIN, OUTPUT);
+  pinMode(PIR_PIN, INPUT);
+
 }
 
 void loop() {
-  
+  if(digitalRead(PIR_PIN)) {
+    digitalWrite(MUSIC_TRIGGER_PIN, LOW);
+  } else {
+    digitalWrite(MUSIC_TRIGGER_PIN, HIGH);
+  }
+}
+
+boolean isMotion() {
+  if(digitalRead(PIR_PIN) == HIGH) {
+    return true;
+  } else {
+    return false;
+  }
 }
