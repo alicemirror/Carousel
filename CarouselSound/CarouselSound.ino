@@ -34,99 +34,160 @@
  * @date May 2019
  */
 
-#include "Arduino.h"
-#include "DFRobotDFPlayerMini.h"
+#include "globals.h"
+
 //! Instance of the DF mp player class
-DFRobotDFPlayerMini myDFPlayer;
+DFRobotDFPlayerMini libDFPlayer;
+//! Player control structure
+SoundControl playerControl;
+
+// =============================================================
+//                    Player Functions
+// =============================================================
+
+//! Initialize the player start parameters
+void initPlayer() {
+  //Set serial communictaion time out 500ms
+  libDFPlayer.setTimeOut(SERIAL_TIMEOUT); 
+  //----Set device we uset----
+  libDFPlayer.reset();     //Reset the module
+  delay(COMMAND_DELAY);
+  //----Set volume----
+  libDFPlayer.volume(playerControl.volume);  //Set volume value (0~30).
+  delay(COMMAND_DELAY);
+  //----Set Equalization----
+  libDFPlayer.EQ(EQUALIZATION);
+  delay(COMMAND_DELAY);
+  //----Set device we uset----
+  libDFPlayer.outputDevice(MP3_DEVICE);
+  delay(COMMAND_DELAY);
+}
+
+/**
+ * Read the dynamic max volume target and update the sructure
+ */
+void getDynamicVolume() {
+  int analogVol = analogRead(ANALOG_FADE_PIN);
+  // Map the analog value to the absolute max volume
+  // on a scale from 0 to 1024
+  playerControl.maxVolume = map(analogVol, 0, 1023, START_VOLUME, MAX_VOLUME);
+}
+
+// Check if the dynamics volume has changed. If so, update the
+// value accordingly
+void checkDynamicVolume() {
+  int analogVol = analogRead(ANALOG_FADE_PIN);
+  // Map the analog value to the absolute max volume
+  // on a scale from 0 to 1024
+  int mappedVolume = map(analogVol, 0, 1023, START_VOLUME, MAX_VOLUME);
+  // If volume has changed update the volme of the player
+  if(mappedVolume > playerControl.maxVolume) {
+    // Volume shoud grow
+    fadeVolume(FADE_IN);
+  } else {
+    // Volume shoud go lower
+    fadeVolume(FADE_OUT);
+  }
+}
+
+/**
+ * Fade in or out the volume, accordingly with the parameter, in the min and max volume range
+ * 
+ * @param inout If inout is > 0 the volume is fade in else it is fadeout
+ */
+void fadeVolume(int inout) {
+  int j;
+
+  getDynamicVolume();
+  
+  if (inout == FADE_IN) {
+    // fade from current volume to max
+    for(j = playerControl.volume; j <= playerControl.maxVolume; j++) {
+      playerControl.volume = j;
+      libDFPlayer.volume(playerControl.volume);
+    }
+  }
+  else {
+    // fade from current volume to min
+    for(j = playerControl.volume; j >= START_VOLUME; j--) {
+      playerControl.volume = j;
+      libDFPlayer.volume(playerControl.volume);
+    }
+  }
+    
+}
+
+/**
+ * Check the status of the player trigger and return the corresponding boolean status
+ */
+void isTrigger() {
+  if(digitalRead(TRIGGER_PIN) == LOW) {
+    digitalWrite(TRIGGER_LED, HIGH);
+    playerControl.trigger = true;  
+  }
+  else {
+    digitalWrite(TRIGGER_LED, LOW);
+    playerControl.trigger = false;  
+  }
+}
+
+// =============================================================
+//                    setup() & loop()
+// =============================================================
 
 //! Initialization function
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(SERIAL_SPEED);
+
+  pinMode(TRIGGER_PIN, INPUT_PULLUP);
+  pinMode(TRIGGER_LED, OUTPUT);
 
   // Wait untile the Arduino serial connected to the player
-  if (!myDFPlayer.begin(Serial)) {  //Use softwareSerial to communicate with mp3.
+  if (!libDFPlayer.begin(Serial)) {
     while(true);
   }
-  
-  myDFPlayer.setTimeOut(500); //Set serial communictaion time out 500ms
-  
-  //----Set volume----
-  myDFPlayer.volume(10);  //Set volume value (0~30).
-//  myDFPlayer.volumeUp(); //Volume Up
-//  myDFPlayer.volumeDown(); //Volume Down
-  
-  //----Set different EQ----
-  myDFPlayer.EQ(DFPLAYER_EQ_NORMAL);
-//  myDFPlayer.EQ(DFPLAYER_EQ_POP);
-//  myDFPlayer.EQ(DFPLAYER_EQ_ROCK);
-//  myDFPlayer.EQ(DFPLAYER_EQ_JAZZ);
-//  myDFPlayer.EQ(DFPLAYER_EQ_CLASSIC);
-//  myDFPlayer.EQ(DFPLAYER_EQ_BASS);
-  
-  //----Set device we use SD as default----
-//  myDFPlayer.outputDevice(DFPLAYER_DEVICE_U_DISK);
-  myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD);
-//  myDFPlayer.outputDevice(DFPLAYER_DEVICE_AUX);
-//  myDFPlayer.outputDevice(DFPLAYER_DEVICE_SLEEP);
-//  myDFPlayer.outputDevice(DFPLAYER_DEVICE_FLASH);
-  
-  //----Mp3 control----
-//  myDFPlayer.sleep();     //sleep
-//  myDFPlayer.reset();     //Reset the module
-//  myDFPlayer.enableDAC();  //Enable On-chip DAC
-//  myDFPlayer.disableDAC();  //Disable On-chip DAC
-//  myDFPlayer.outputSetting(true, 15); //output setting, enable the output and set the gain to 15
-  
-  //----Mp3 play----
-//  myDFPlayer.next();  //Play next mp3
-//  delay(1000);
-//  myDFPlayer.previous();  //Play previous mp3
-//  delay(1000);
-  myDFPlayer.play(1);  //Play the first mp3
-  delay(1000);
-//  myDFPlayer.loop(1);  //Loop the first mp3
-//  delay(1000);
-//  myDFPlayer.pause();  //pause the mp3
-//  delay(1000);
-//  myDFPlayer.start();  //start the mp3 from the pause
-//  delay(1000);
-//  myDFPlayer.playFolder(15, 4);  //play specific mp3 in SD:/15/004.mp3; Folder Name(1~99); File Name(1~255)
-//  delay(1000);
-//  myDFPlayer.enableLoopAll(); //loop all mp3 files.
-//  delay(1000);
-//  myDFPlayer.disableLoopAll(); //stop loop all mp3 files.
-//  delay(1000);
-//  myDFPlayer.playMp3Folder(4); //play specific mp3 in SD:/MP3/0004.mp3; File Name(0~65535)
-//  delay(1000);
-//  myDFPlayer.advertise(3); //advertise specific mp3 in SD:/ADVERT/0003.mp3; File Name(0~65535)
-//  delay(1000);
-//  myDFPlayer.stopAdvertise(); //stop advertise
-//  delay(1000);
-//  myDFPlayer.playLargeFolder(2, 999); //play specific mp3 in SD:/02/004.mp3; Folder Name(1~10); File Name(1~1000)
-//  delay(1000);
-//  myDFPlayer.loopFolder(5); //loop all mp3 files in folder SD:/05.
-//  delay(1000);
-//  myDFPlayer.randomAll(); //Random play all the mp3.
-//  delay(1000);
-//  myDFPlayer.enableLoop(); //enable loop.
-//  delay(1000);
-//  myDFPlayer.disableLoop(); //disable loop.
-//  delay(1000);
 
+  initPlayer();
 }
 
+/**
+ * Main loop
+ */
 void loop()
 {
-  static unsigned long timer = millis();
-  
-  if (millis() - timer > 30000) {
-    timer = millis();
-    myDFPlayer.next();  //Play next mp3 every 3 second.
-  }
-  
-//  if (myDFPlayer.available()) {
-//    printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
-//  }
+  // Check the start/stop trigger
+  isTrigger();
+
+  // The trigger is active
+  if(playerControl.trigger == true) {
+    // Check if is already playing
+    if(playerControl.isPlaying == false) {
+      // Update the song
+      playerControl.currentSong++;
+      if(playerControl.currentSong > MAX_SONGS) {
+        // Reset the song counter
+        playerControl.currentSong = 1;
+      } // Updated player status and song
+      playerControl.isPlaying = true;
+      // Start playing with a fadein the new song and loop
+      // until the trigger is not reset
+      libDFPlayer.loop(playerControl.currentSong);
+      fadeVolume(FADE_IN);
+    } // Playing started
+//    else { // Not used
+//      // Is already playing, check if the target volume has changed
+//      checkDynamicVolume();
+//    }
+  } // Trigger is set
+  else {
+    // Trigger is not active, check if is playing and fade out the song
+    if(playerControl.isPlaying == true)
+    // Fade out the song
+    fadeVolume(FADE_OUT);
+    // Put the player in pause
+    libDFPlayer.pause();
+    playerControl.isPlaying = false;
+  } // Playing stopped
 }
 
 void printDetail(uint8_t type, int value){
