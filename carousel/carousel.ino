@@ -14,19 +14,31 @@
  */
 #include "statemachine.h"
 
+// Create an instance of the state machine class
+StateMachine carousel;
+
 //! Setup and initialization
 void setup() {
   pinMode(MUSIC_TRIGGER_PIN, OUTPUT);
   pinMode(PIR_PIN, INPUT);
 
+  carousel.initStatus();
 }
 
+//! Main loop method
 void loop() {
-  if(digitalRead(PIR_PIN)) {
-    digitalWrite(MUSIC_TRIGGER_PIN, LOW);
-  } else {
-    digitalWrite(MUSIC_TRIGGER_PIN, HIGH);
-  }
+  if(carousel.isPir() ) {
+    // Sensor PIR has been activated, check if
+    // it is time to disable it
+    if(carousel.getElapsed() > CAROUSEL_CYCLE) {
+      // The cycle should stop
+      carousel.endCarousel();
+    } // Time elapsed
+  } // Pir is active
+  else {
+    // Check if there is a movement detection
+    carousel.checkPirStatus();
+  } // Movement detection
 }
 
 boolean isMotion() {

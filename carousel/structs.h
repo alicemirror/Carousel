@@ -4,7 +4,7 @@
  * 
  * \date May 2019
  * \author Enrico Miglino <balearicdynamics@gmail.com>
- * \version 1.0
+ * \version 1.0.1
  * 
  */
 
@@ -15,11 +15,15 @@
 
 //! Structure defining the status flags of the machine
 typedef struct {
-    boolean music;                      ///< The status of the mp3 player
-    boolean pir;                        ///< The status of the PIR sensor
-    boolean wheel;                      ///< The status of the rotating wheel
+    boolean music;             ///< The status of the mp3 player
+    boolean pir;               ///< The status of the PIR sensor
+    int wheel;                 ///< The rotating wheel speed
     int light;                 ///< The current light intensity
-    int song;                     ///< The number of the current played song
+    /**
+     * Reading of the timer when the PIR status has been detected
+     * It is reset everytime the pir status is read positive
+     */
+    unsigned long timerStart;
 } MachineStatus;
 
 #endif

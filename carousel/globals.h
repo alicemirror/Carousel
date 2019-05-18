@@ -4,7 +4,7 @@
  * 
  * \date May 2019
  * \author Enrico Miglino <balearicdynamics@gmail.com>
- * \version 1.0
+ * \version 1.0.1
  * 
  */
 
@@ -36,6 +36,7 @@
 #define HIGH_LIGHT 200      ///< Light intensity when the system has been activated
 #define PIR_ENABLED 1       ///< PIR sensor pin when a presence is detected
 #define PIR_DISABLED 0      ///< PIR sensor pint when no presence is detected
-#define NUM_SONGS 13        ///< Number of tracks on the mpt3 player microSD
+#define CAROUSEL_CYCLE 20   ///< motion, lights and music duration (sec)
+
 
 #endif
