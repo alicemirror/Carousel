@@ -40,15 +40,15 @@
 
 #define CLOCKWISE 1         ///< Clockwise roation increment
 #define COUNTERCLOCKWISE -1 ///< Counterclockwise roation increment
-#define WHEEL_CAROUSEL 3  ///< Wheel rotating servo speed
-#define WHEEL_STOP 90       ///< Wheel ratating servo stopped
-#define MIN_ANGLE 20        ///< Minimum servo angle
-#define MAX_ANGLE 120       ///< Maximum servo angle
-#define LOW_LIGHT 35        ///< Light intensity when the system is in standby
+#define WHEEL_CAROUSEL 110 ///< Wheel rotating servo speed
+#define WHEEL_STOP 95       ///< Wheel ratating servo stopped
+#define MIN_ANGLE 10        ///< Minimum servo angle
+#define MAX_ANGLE 90       ///< Maximum servo angle
+#define LOW_LIGHT 5        ///< Light intensity when the system is in standby
 #define HIGH_LIGHT 200      ///< Light intensity when the system has been activated
 #define PIR_ENABLED 1       ///< PIR sensor pin when a presence is detected
 #define PIR_DISABLED 0      ///< PIR sensor pint when no presence is detected
-#define CAROUSEL_CYCLE 20   ///< motion, lights and music duration (sec) ENABLED BY PIR
+#define CAROUSEL_CYCLE 40   ///< motion, lights and music duration (sec) ENABLED BY PIR
 #define SERVO_CYCLE 25      ///< Light servo rotation delaty every 1 angle step
 
 #endif

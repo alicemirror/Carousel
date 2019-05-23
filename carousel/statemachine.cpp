@@ -73,11 +73,13 @@ void StateMachine::updateHardware() {
 
   // Check for the light servo rotation interval
   // end eventually moved the servos
-  servoLightTimeToMove();
+  if(m_Status.pir == true) {
+    servoLightTimeToMove();
+  }
 }
 
 void StateMachine::setWheelRotation() {
-//  servos[WHEEL].write(m_Status.wheel);
+  servos[WHEEL].write(m_Status.wheel);
 }
 
 void StateMachine::checkPirStatus() {
