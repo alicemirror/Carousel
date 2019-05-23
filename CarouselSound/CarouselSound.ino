@@ -142,6 +142,9 @@ void setup() {
   pinMode(TRIGGER_PIN, INPUT_PULLUP);
   pinMode(TRIGGER_LED, OUTPUT);
 
+  libDFPlayer.begin(Serial);
+  delay(1000);
+
   // Wait untile the Arduino serial connected to the player
   if (!libDFPlayer.begin(Serial)) {
     while(true);

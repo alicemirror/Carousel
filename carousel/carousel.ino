@@ -1,7 +1,6 @@
 /**
  * \file RotatingBalls.ino
- * \brief The Arduino MKR100 version of the rotating boar with
- * lights and music.
+ * \brief The Arduino MKR100 module of the carousel projec
  * 
  * The software design approach of this program is of a satus machine where the change of
  * some of the control statuses (e.g. the PIR presence detection) changes the status of the
@@ -19,9 +18,7 @@ StateMachine carousel;
 
 //! Setup and initialization
 void setup() {
-  pinMode(MUSIC_TRIGGER_PIN, OUTPUT);
-  pinMode(PIR_PIN, INPUT);
-
+  carousel.initHardware();
   carousel.initStatus();
 }
 
@@ -38,13 +35,11 @@ void loop() {
   else {
     // Check if there is a movement detection
     carousel.checkPirStatus();
+    // If Pir status is true, the music is starting and we shoud
+    // start the other stuff
   } // Movement detection
-}
 
-boolean isMotion() {
-  if(digitalRead(PIR_PIN) == HIGH) {
-    return true;
-  } else {
-    return false;
-  }
+  // Update the hardware components, accordingly with 
+  // the machine status
+  carousel.updateHardware();
 }
