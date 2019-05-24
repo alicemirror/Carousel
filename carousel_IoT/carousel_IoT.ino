@@ -67,6 +67,14 @@ void setup() {
   // and the accompanying public certificate for it
   sslClient.setEccSlot(0, certificate);
 
+  // Optionally set the client id used for MQTT,
+  // each device that is connected to the broker
+  // must have a unique client id. The MQTTClient will generate
+  // a client id for you based on the millis() value if not set
+  // but we will use the client ID from remote to publish messages
+  // to this specific client
+  mqttClient.setId(MQTT_CLIENT_ID);
+
   // Set the message callback, this function is
   // called when the MQTTClient receives a message
   mqttClient.onMessage(onMessageReceived);
@@ -112,7 +120,6 @@ void loop() {
   // Update the hardware components, accordingly with 
   // the machine status
   carousel.updateHardware();
-//  checkMessageReceived();
 } // Main loop
 
 // ======================================== IoT functions
@@ -175,32 +182,15 @@ void onMessageReceived(int messageSize) {
     Serial << (char)mqttClient.read();
 #endif
   }
+
+  // Empty the message buffer
+  mqttClient.flush();
   
 #ifdef _DEBUG
   Serial << endl << endl;
 #endif
-}
 
-//! Check for new message from MQTT Broker
-void checkMessageReceived() {
-
-  if(mqttClient.available()) {
-    #ifdef _DEBUG
-      Serial << "Message from topic '" << mqttClient.messageTopic() << endl;
-    #endif
-    
-      // use the Stream interface to print the contents
-      while (mqttClient.available()) {
-    #ifdef _DEBUG
-        Serial << (char)mqttClient.read();
-    #endif
-      }
-      
-    #ifdef _DEBUG
-      Serial << endl << endl;
-    #endif
-  }
-
+  publishJsonIoTStatus();
 }
 
 // ======================================== IoT status functions
@@ -233,8 +223,6 @@ void updateIoTStatus() {
   statusIoT.wheelRotations += msPlayed / 60000 * WHEEL_RPM;
   //! Recalculate the number of spheres passed
   statusIoT.numSpheres += statusIoT.wheelRotations * SPHERES_PER_ROTATION;
-
-  publishJsonIoTStatus();
 }
 
 //! Create the Json formatted IoT status message to send to the broker
@@ -247,10 +235,6 @@ void publishJsonIoTStatus() {
                     ",\n'minutes': " + String(statusIoT.timePlayedUntilNow) + 
                     ",\nrotations': " + String(statusIoT.wheelRotations) + 
                     ",\n'spheres': " + String(statusIoT.numSpheres) + "\n}");
-
-#ifdef _DEBUG
-  Serial << jPublish << endl;
-#endif
   mqttClient.beginMessage(MQTT_CLIENT_PUBLISHER);
   mqttClient.print(jPublish);
   mqttClient.endMessage();

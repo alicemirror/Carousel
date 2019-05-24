@@ -61,7 +61,8 @@
 #define WHEEL_RPM 8.5         ///! Rotations per minute of the wheel
 #define SPHERES_PER_ROTATION 3 ///< Number of spheres passed every rotation
 //! The subscriber topic for the carousel thing topic
-#define MQTT_CLIENT_SUBSCRIBER "carousel/remote"
-#define MQTT_CLIENT_PUBLISHER "carousel/status"
+#define MQTT_CLIENT_SUBSCRIBER "carousel.status"
+#define MQTT_CLIENT_PUBLISHER "carousel.status"
+#define MQTT_CLIENT_ID "carouselThing"
 
 #endif
