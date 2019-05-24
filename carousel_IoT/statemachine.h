@@ -14,13 +14,8 @@
 #include "globals.h"
 #include "structs.h"
 
-// Undef to avoid serial output of debug
-#define _DEBUG
-
-#ifdef _DEBUG
-#include "Streaming.h"
-#endif
-
+//! The state machine class control the behavior of all the hardware and the
+//! logic of movements accordingly with the PIR sensor
 class StateMachine {
   private:
   //! Array of the servo pins

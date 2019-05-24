@@ -10,11 +10,11 @@
 
 #include "Arduino.h"
 
-#ifndef _SRUCTS
+#ifndef _STRUCTS
 #define _STRUCTS
 
 //! Structure defining the status flags of the machine
-typedef struct {
+typedef struct MachineStatus {
     boolean music;             ///< The status of the mp3 player
     boolean pir;               ///< The status of the PIR sensor
     int wheel;                 ///< The rotating wheel speed
@@ -48,6 +48,22 @@ typedef struct {
      * updateHardware() is called.
      */
     unsigned long timerServo;
-} MachineStatus;
+};
+
+//! MQTT message structure
+typedef struct IoTmessage {
+  //! Number of detections by the last power on
+  int detections;
+  //! Start playing the carousel (ms)
+  //! Updated after everydetection cycle starts
+  unsigned long timerStart;
+  //! Total number of minutes played by the last power on
+  float timePlayedUntilNow;
+  //! Number of wheels rotations (including partial rotations)
+  //! by the last power on
+  float wheelRotations;
+  //! Total number of spheres cycles in the carousel
+  unsigned long numSpheres;  
+};
 
 #endif
