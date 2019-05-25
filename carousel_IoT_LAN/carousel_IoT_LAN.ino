@@ -102,6 +102,12 @@ void connectWiFi() {
   Serial << "Attempting to connect to SSID: " << ssid << " ";
 #endif
 
+  //! Set the internal fixed IP address of the MKR100 board
+  IPAddress ip(192, 168, 0, 250);
+
+  // Configure the WiFi to a fixed IP address
+  WiFi.config(ip);
+
   while (WiFi.begin(ssid, pass) != WL_CONNECTED) {
 #ifdef _DEBUG
     Serial << ".";
