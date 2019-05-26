@@ -59,7 +59,7 @@
 #define MQTT_BROKER_PORT 8883 ///< Remote port to connect to the broker via MQTT protocol (standard)
 #define CONN_DELAY 5000  ///< Delay (ms) while trying multiple times to connect
 //! The subscriber topic for the carousel thing topic
-#define MQTT_CLIENT_SUBSCRIBER "carousel/start"
+#define MQTT_CLIENT_SUBSCRIBER "/start"
 
 #define MQTT_LIGTHS "mqtt_lights"   ///< Command to start lights
 #define MQTT_MUSIC "mqtt_music"     ///< Command to start music
